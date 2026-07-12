@@ -10,6 +10,8 @@ import LiveChat from "./components/LiveChat";
 import { Toaster } from "sonner";
 
 // ── Lazy load pages ───────────────────────────────────────
+const MT4TradingPage = lazy(() => import("./pages/MT4TradingPage"));
+const MT5TradingPage = lazy(() => import("./pages/MT5TradingPage"));
 const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
@@ -50,6 +52,10 @@ function App() {
             <Navbar />
             <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#F5F5F0]"><div className="animate-spin w-8 h-8 border-2 border-[#D51820] border-t-transparent rounded-full" /></div>}>
               <Routes>
+                                {/* MT4/MT5 Trading Pages */}
+                <Route path="/platforms/mt4" element={<MT4TradingPage />} />
+                <Route path="/platforms/mt5" element={<MT5TradingPage />} />
+
                 {/* Landing Pages */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/home" element={<Home />} />
