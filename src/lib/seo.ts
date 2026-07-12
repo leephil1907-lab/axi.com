@@ -4,95 +4,56 @@ export const siteConfig = {
   name: 'AXI Trading',
   url: 'https://axi-trading.com',
   ogImage: 'https://axi-trading.com/og-image.jpg',
-  description: 'Trade Forex, Crypto, Commodities & Indices with AXI. Award-winning platform with 1000+ instruments, tight spreads, and 24/7 support.',
-  keywords: 'forex trading, crypto trading, CFD trading, MT4, MT5, online broker, trading platform, commodities, indices, stocks',
-  twitter: '@AXITrading',
-  facebook: 'AXITrading',
-  locale: 'en_US',
-  type: 'website',
+  description: 'Trade Forex, Crypto, Commodities & Indices with tight spreads, fast execution, and award-winning platforms.',
+  keywords: 'forex trading, crypto trading, CFD trading, MT4, MT5, online trading, financial markets',
+  twitter: '@axi_trading',
+  facebook: 'axi.trading.official',
+  linkedin: 'company/axi-trading',
 };
 
-export const defaultMetadata = {
-  title: {
-    default: 'AXI Trading | Trade Forex, Crypto & CFDs Online',
-    template: '%s | AXI Trading',
-  },
-  description: siteConfig.description,
-  keywords: siteConfig.keywords,
-  authors: [{ name: 'AXI Trading' }],
-  creator: 'AXI Trading',
-  metadataBase: new URL(siteConfig.url),
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    type: 'website',
-    locale: siteConfig.locale,
-    url: siteConfig.url,
-    siteName: siteConfig.name,
-    title: 'AXI Trading | Trade Forex, Crypto & CFDs Online',
-    description: siteConfig.description,
-    images: [{ url: siteConfig.ogImage, width: 1200, height: 630, alt: 'AXI Trading Platform' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    site: siteConfig.twitter,
-    creator: siteConfig.twitter,
-    title: 'AXI Trading | Trade Forex, Crypto & CFDs Online',
-    description: siteConfig.description,
-    images: [siteConfig.ogImage],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  verification: {
-    google: 'YOUR_GOOGLE_SEARCH_CONSOLE_ID',
-    yandex: 'YOUR_YANDEX_ID',
-    bing: 'YOUR_BING_WEBMASTER_ID',
-  },
-};
-
-// Page-specific metadata generator
-export function generateMetadata({
+export function generateMetaTags({
   title,
   description,
-  path,
-  ogImage,
+  path = '',
+  image,
+  type = 'website',
   noIndex = false,
 }: {
   title: string;
   description: string;
-  path: string;
-  ogImage?: string;
+  path?: string;
+  image?: string;
+  type?: string;
   noIndex?: boolean;
 }) {
+  const fullTitle = `${title} | ${siteConfig.name}`;
+  const url = `${siteConfig.url}${path}`;
+  const ogImage = image || siteConfig.ogImage;
+
   return {
-    title: `${title} | AXI Trading`,
-    description,
+    title: fullTitle,
+    description: description || siteConfig.description,
     keywords: siteConfig.keywords,
-    alternates: { canonical: `${siteConfig.url}${path}` },
+    ...(noIndex ? { robots: 'noindex, nofollow' } : {}),
     openGraph: {
-      ...defaultMetadata.openGraph,
-      title: `${title} | AXI Trading`,
-      description,
-      url: `${siteConfig.url}${path}`,
-      images: ogImage ? [{ url: ogImage, width: 1200, height: 630 }] : defaultMetadata.openGraph.images,
+      title: fullTitle,
+      description: description || siteConfig.description,
+      url,
+      siteName: siteConfig.name,
+      images: [{ url: ogImage, width: 1200, height: 630 }],
+      locale: 'en_US',
+      type,
     },
     twitter: {
-      ...defaultMetadata.twitter,
-      title: `${title} | AXI Trading`,
-      description,
-      images: ogImage ? [ogImage] : defaultMetadata.twitter.images,
+      card: 'summary_large_image',
+      title: fullTitle,
+      description: description || siteConfig.description,
+      images: [ogImage],
+      creator: siteConfig.twitter,
     },
-    robots: noIndex ? { index: false, follow: false } : defaultMetadata.robots,
+    alternates: {
+      canonical: url,
+    },
   };
 }
 
@@ -105,33 +66,39 @@ export function generateOrganizationSchema() {
     url: siteConfig.url,
     logo: `${siteConfig.url}/logo.png`,
     sameAs: [
-      'https://twitter.com/AXITrading',
-      'https://facebook.com/AXITrading',
-      'https://linkedin.com/company/axi-trading',
-      'https://instagram.com/axi.trading',
-      'https://youtube.com/AXITrading',
+      `https://twitter.com/${siteConfig.twitter}`,
+      `https://facebook.com/${siteConfig.facebook}`,
+      `https://linkedin.com/${siteConfig.linkedin}`,
     ],
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+1-800-888-8888',
-      contactType: 'Customer Support',
-      availableLanguage: ['English', 'Spanish', 'French', 'German', 'Arabic', 'Chinese'],
+      telephone: '+1-800-888-888',
+      contactType: 'customer service',
+      availableLanguage: ['English', 'Spanish', 'French', 'German', 'Arabic'],
     },
   };
 }
 
-export function generateFinancialProductSchema() {
+export function generateFinancialProductSchema({
+  name,
+  description,
+  instrument,
+}: {
+  name: string;
+  description: string;
+  instrument: string;
+}) {
   return {
     '@context': 'https://schema.org',
     '@type': 'FinancialProduct',
-    name: 'AXI Trading Account',
-    description: 'Trade Forex, Crypto, Commodities and Indices with tight spreads',
+    name,
+    description,
+    category: instrument,
     provider: {
       '@type': 'Organization',
       name: 'AXI Trading',
+      url: siteConfig.url,
     },
-    category: 'Trading Account',
-    termsOfService: `${siteConfig.url}/terms-of-service`,
   };
 }
 
@@ -143,7 +110,7 @@ export function generateBreadcrumbSchema(items: { name: string; url: string }[])
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: `${siteConfig.url}${item.url}`,
+      item: item.url,
     })),
   };
 }
@@ -166,18 +133,14 @@ export function generateFAQSchema(faqs: { question: string; answer: string }[]) 
 export function generateArticleSchema({
   title,
   description,
-  url,
   image,
-  datePublished,
-  dateModified,
+  publishedAt,
   author,
 }: {
   title: string;
   description: string;
-  url: string;
   image: string;
-  datePublished: string;
-  dateModified: string;
+  publishedAt: string;
   author: string;
 }) {
   return {
@@ -186,14 +149,95 @@ export function generateArticleSchema({
     headline: title,
     description,
     image,
-    datePublished,
-    dateModified,
-    author: { '@type': 'Person', name: author },
+    datePublished: publishedAt,
+    author: {
+      '@type': 'Person',
+      name: author,
+    },
     publisher: {
       '@type': 'Organization',
       name: 'AXI Trading',
-      logo: { '@type': 'ImageObject', url: `${siteConfig.url}/logo.png` },
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteConfig.url}/logo.png`,
+      },
     },
-    url: `${siteConfig.url}${url}`,
   };
+}
+
+// Sitemap generation
+export function generateSitemap(pages: { path: string; lastmod: string; priority: number; changefreq: string }[]) {
+  const urls = pages.map(page => `
+    <url>
+      <loc>${siteConfig.url}${page.path}</loc>
+      <lastmod>${page.lastmod}</lastmod>
+      <changefreq>${page.changefreq}</changefreq>
+      <priority>${page.priority.toFixed(1)}</priority>
+    </url>
+  `).join('');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>`;
+}
+
+// Analytics initialization
+export function initGoogleAnalytics(gaId: string) {
+  return `
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${gaId}', {
+      page_title: document.title,
+      page_location: window.location.href,
+      send_page_view: true,
+      custom_map: {
+        'dimension1': 'user_type',
+        'dimension2': 'account_type',
+        'dimension3': 'trading_platform',
+      }
+    });
+  `;
+}
+
+export function initMicrosoftClarity(clarityId: string) {
+  return `
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "${clarityId}");
+  `;
+}
+
+export function trackEvent(eventName: string, params?: Record<string, any>) {
+  if (typeof window !== 'undefined' && (window as any).gtag) {
+    (window as any).gtag('event', eventName, params);
+  }
+  if (typeof window !== 'undefined' && (window as any).clarity) {
+    (window as any).clarity('event', eventName, params);
+  }
+}
+
+// Canonical URL helper
+export function getCanonicalUrl(path: string) {
+  return `${siteConfig.url}${path}`;
+}
+
+// Internal linking helper
+export function getRelatedPages(currentPath: string) {
+  const links: Record<string, { name: string; url: string }[]> = {
+    '/markets/forex': [
+      { name: 'EUR/USD Analysis', url: '/blog/eur-usd-analysis' },
+      { name: 'Forex Trading Guide', url: '/learn/forex-basics' },
+      { name: 'MT4 Platform', url: '/platforms/mt4' },
+    ],
+    '/markets/crypto': [
+      { name: 'Bitcoin Trading', url: '/blog/bitcoin-trading-strategies' },
+      { name: 'Crypto Guide', url: '/learn/crypto-basics' },
+      { name: 'MT5 Platform', url: '/platforms/mt5' },
+    ],
+  };
+  return links[currentPath] || [];
 }

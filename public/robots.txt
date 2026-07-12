@@ -1,25 +1,14 @@
 User-agent: *
 Allow: /
-
-# Sitemap
-Sitemap: https://axi-trading.com/sitemap.xml
-
-# Disallow admin and private pages
 Disallow: /admin
-Disallow: /admin-v2
 Disallow: /api/
+Disallow: /portal/
 Disallow: /dashboard
-Disallow: /portal
-Disallow: /settings
 Disallow: /trading
+Disallow: /settings
 
-# Crawl delay
+Sitemap: https://axi-trading.com/sitemap.xml
+Sitemap: https://axi-trading.com/sitemap-markets.xml
+Sitemap: https://axi-trading.com/sitemap-blog.xml
+
 Crawl-delay: 1
-
-# Google-specific
-User-agent: Googlebot
-Allow: /
-
-# Bing-specific
-User-agent: Bingbot
-Allow: /

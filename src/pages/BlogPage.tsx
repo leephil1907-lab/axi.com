@@ -1,86 +1,188 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import Navbar from "@/sections/Navbar";
 import Footer from "@/sections/Footer";
 import TopBar from "@/sections/TopBar";
-import Breadcrumb from "@/components/Breadcrumb";
-import { Search, Calendar, Clock, ArrowRight } from "lucide-react";
+import { Search, Calendar, Clock, User, TrendingUp, TrendingDown, ArrowRight, Tag, ChevronRight } from "lucide-react";
 
 const blogPosts = [
-  { id: 1, title: "EUR/USD Analysis: Fed Decision Looms Large", excerpt: "The euro faces critical resistance ahead of this week's Federal Reserve meeting.", category: "Market Analysis", author: "Sarah Johnson", date: "2026-07-12", readTime: "5 min", trending: true },
-  { id: 2, title: "Gold Hits New Record: Is $3,000 Next?", excerpt: "Gold surged to fresh all-time highs as geopolitical tensions escalate.", category: "Commodities", author: "Michael Chen", date: "2026-07-11", readTime: "4 min", trending: true },
-  { id: 3, title: "Bitcoin ETF Inflows Reach $2B Monthly", excerpt: "Institutional adoption continues as spot Bitcoin ETFs see record inflows.", category: "Crypto", author: "Alex Rivera", date: "2026-07-10", readTime: "6 min", trending: false },
-  { id: 4, title: "Understanding Leverage: A Beginner's Guide", excerpt: "Leverage can amplify both gains and losses. Learn how to use it responsibly.", category: "Education", author: "Emma Williams", date: "2026-07-09", readTime: "8 min", trending: false },
-  { id: 5, title: "OPEC+ Meeting: Oil Price Outlook", excerpt: "Oil markets brace for the latest OPEC+ production decision.", category: "Commodities", author: "David Park", date: "2026-07-08", readTime: "5 min", trending: true },
-  { id: 6, title: "Top 5 Trading Strategies for Volatile Markets", excerpt: "Discover proven strategies used by professional traders during market turbulence.", category: "Education", author: "Lisa Thompson", date: "2026-07-07", readTime: "10 min", trending: false },
+  {
+    id: 1,
+    title: "EUR/USD Analysis: ECB Decision Looms Large",
+    excerpt: "The euro faces a critical test this week as the European Central Bank prepares its latest monetary policy decision. With inflation data showing mixed signals...",
+    category: "Forex Analysis",
+    author: "Sarah Chen",
+    date: "2026-07-10",
+    readTime: "5 min",
+    image: "eurusd",
+    trending: "up",
+    tags: ["EUR/USD", "ECB", "Forex", "Technical Analysis"],
+  },
+  {
+    id: 2,
+    title: "Gold Breaks $2,700: What's Next for XAU/USD?",
+    excerpt: "Gold has surged to new all-time highs as geopolitical tensions and inflation concerns drive safe-haven demand. Our technical analysis suggests...",
+    category: "Commodities",
+    author: "Michael Torres",
+    date: "2026-07-09",
+    readTime: "7 min",
+    image: "gold",
+    trending: "up",
+    tags: ["Gold", "XAU/USD", "Commodities", "Safe Haven"],
+  },
+  {
+    id: 3,
+    title: "Bitcoin ETF Inflows Hit Record $500M in Single Day",
+    excerpt: "Institutional adoption of Bitcoin continues to accelerate as spot ETFs see unprecedented inflows. This marks a significant milestone for the crypto market...",
+    category: "Crypto",
+    author: "Alex Kim",
+    date: "2026-07-08",
+    readTime: "4 min",
+    image: "bitcoin",
+    trending: "up",
+    tags: ["Bitcoin", "ETF", "Crypto", "Institutional"],
+  },
+  {
+    id: 4,
+    title: "Fed Chair Powell Speech: Market Expectations",
+    excerpt: "Markets are pricing in a dovish pivot from the Federal Reserve. We break down what traders should watch for in tomorrow's speech and how it could impact...",
+    category: "Market News",
+    author: "Emma Williams",
+    date: "2026-07-07",
+    readTime: "6 min",
+    image: "fed",
+    trending: "down",
+    tags: ["Fed", "USD", "Interest Rates", "Macro"],
+  },
+  {
+    id: 5,
+    title: "OPEC+ Maintains Production Cuts: Oil Market Outlook",
+    excerpt: "Crude oil prices found support as OPEC+ members agreed to maintain current production cuts through Q3 2026. The decision reflects concerns about...",
+    category: "Commodities",
+    author: "David Patel",
+    date: "2026-07-06",
+    readTime: "5 min",
+    image: "oil",
+    trending: "up",
+    tags: ["Oil", "OPEC", "Commodities", "Energy"],
+  },
+  {
+    id: 6,
+    title: "GBP/USD Under Pressure as BoE Signals Dovish Pivot",
+    excerpt: "The British pound weakened against the dollar as the Bank of England hinted at potential rate cuts. Technical levels to watch include...",
+    category: "Forex Analysis",
+    author: "Sarah Chen",
+    date: "2026-07-05",
+    readTime: "5 min",
+    image: "gbpusd",
+    trending: "down",
+    tags: ["GBP/USD", "BoE", "Forex", "Technical"],
+  },
 ];
 
-const categories = ['All', 'Market Analysis', 'Crypto', 'Commodities', 'Forex', 'Education', 'Company News'];
+const categories = ["All", "Forex Analysis", "Crypto", "Commodities", "Market News", "Education", "Trading Strategy"];
 
 export default function BlogPage() {
-  const [activeCategory, setActiveCategory] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredPosts = blogPosts.filter(post => {
-    const matchesCategory = activeCategory === 'All' || post.category === activeCategory;
-    const matchesSearch = !searchQuery || post.title.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+  const filtered = blogPosts.filter(p => {
+    const matchCat = activeCategory === "All" || p.category === activeCategory;
+    const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchCat && matchSearch;
   });
+
+  const featured = blogPosts[0];
 
   return (
     <div className="min-h-screen bg-[#F5F5F0]">
-      <TopBar />
-      <Navbar />
-      <Breadcrumb />
+      <TopBar /><Navbar />
+
+      {/* Hero */}
+      <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] text-white py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold mb-4">Market Insights & Analysis</h1>
+            <p className="text-gray-400 max-w-2xl mx-auto">Expert analysis, market updates, and trading strategies from our team of professional analysts.</p>
+          </div>
+          <div className="relative max-w-xl mx-auto">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search articles..."
+              className="w-full bg-white/10 border border-white/20 rounded-xl pl-12 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-[#D51820]"
+            />
+          </div>
+        </div>
+      </div>
 
       <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Market Insights & Analysis</h1>
-          <p className="text-gray-600">Daily market analysis, trading strategies, and educational content</p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input type="text" placeholder="Search articles..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-[#D51820]" />
-          </div>
-          <div className="flex gap-2 overflow-x-auto">
-            {categories.map((cat) => (
-              <button key={cat} onClick={() => setActiveCategory(cat)} className={`px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeCategory === cat ? 'bg-[#D51820] text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}>
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-6">
-          {filteredPosts.map((post) => (
-            <div key={post.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-              <div className="h-40 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                <span className="text-4xl">{post.category === 'Crypto' ? '₿' : post.category === 'Commodities' ? '🥇' : '📊'}</span>
+        {/* Featured Post */}
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-12">
+          <div className="grid grid-cols-2">
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 flex flex-col justify-center">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="bg-[#D51820] text-white text-xs px-3 py-1 rounded-full font-semibold">FEATURED</span>
+                <span className="text-gray-400 text-sm">{featured.category}</span>
               </div>
-              <div className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-[#D51820] font-medium">{post.category}</span>
-                  {post.trending && <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded">🔥 Trending</span>}
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{post.title}</h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">{post.excerpt}</p>
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span>{post.author}</span>
-                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {post.readTime}</span>
-                </div>
+              <h2 className="text-2xl font-bold text-white mb-3">{featured.title}</h2>
+              <p className="text-gray-400 mb-4">{featured.excerpt}</p>
+              <div className="flex items-center gap-4 text-sm text-gray-500">
+                <span className="flex items-center gap-1"><User className="w-4 h-4" /> {featured.author}</span>
+                <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {featured.date}</span>
+                <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {featured.readTime}</span>
               </div>
+              <Link to={`/blog/${featured.id}`} className="inline-flex items-center gap-2 text-[#D51820] font-semibold mt-4 hover:underline">
+                Read Analysis <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
+            <div className="bg-gray-100 flex items-center justify-center">
+              <div className="text-6xl font-bold text-gray-300">{featured.image.toUpperCase()}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Category Filter */}
+        <div className="flex gap-2 mb-8 overflow-x-auto">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${activeCategory === cat ? 'bg-[#D51820] text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+            >
+              {cat}
+            </button>
           ))}
         </div>
 
-        <div className="mt-12 bg-gradient-to-r from-[#1A1A1A] to-[#2A2A2A] rounded-2xl p-8 text-white text-center">
-          <h3 className="text-xl font-bold mb-2">Stay Ahead of the Markets</h3>
-          <p className="text-gray-400 mb-6">Get daily market analysis delivered to your inbox</p>
-          <div className="flex max-w-md mx-auto gap-2">
-            <input type="email" placeholder="Enter your email" className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-white/40" />
-            <button className="bg-[#D51820] text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors">Subscribe</button>
-          </div>
+        {/* Posts Grid */}
+        <div className="grid grid-cols-3 gap-6">
+          {filtered.slice(1).map((post) => (
+            <article key={post.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+              <div className="h-40 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                <span className="text-2xl font-bold text-gray-300">{post.image.toUpperCase()}</span>
+              </div>
+              <div className="p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs text-[#D51820] font-semibold">{post.category}</span>
+                  {post.trending === "up" ? <TrendingUp className="w-3 h-3 text-green-500" /> : <TrendingDown className="w-3 h-3 text-red-500" />}
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{post.title}</h3>
+                <p className="text-sm text-gray-500 mb-4 line-clamp-2">{post.excerpt}</p>
+                <div className="flex items-center justify-between text-xs text-gray-400">
+                  <span className="flex items-center gap-1"><User className="w-3 h-3" /> {post.author}</span>
+                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {post.readTime}</span>
+                </div>
+                <div className="flex flex-wrap gap-1 mt-3">
+                  {post.tags.slice(0, 2).map((tag) => (
+                    <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
 
