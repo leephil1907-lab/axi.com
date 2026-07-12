@@ -13,6 +13,30 @@ import { Toaster } from "sonner";
 const MT4TradingPage = lazy(() => import("./pages/MT4TradingPage"));
 const MT5TradingPage = lazy(() => import("./pages/MT5TradingPage"));
 const AxiSelectPage = lazy(() => import("./pages/AxiSelectPage"));
+const FAQPage = lazy(() => import("./pages/FAQPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const BlogPage = lazy(() => import("./pages/BlogPage"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const RiskDisclosure = lazy(() => import("./pages/RiskDisclosure"));
+const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
+const GDPRCompliance = lazy(() => import("./pages/GDPRCompliance"));
+const AMLPolicy = lazy(() => import("./pages/AMLPolicy"));
+const KYCPolicy = lazy(() => import("./pages/KYCPolicy"));
+const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
+const Disclaimer = lazy(() => import("./pages/Disclaimer"));
+const ComplaintsProcedure = lazy(() => import("./pages/ComplaintsProcedure"));
+const ConflictsOfInterest = lazy(() => import("./pages/ConflictsOfInterest"));
+const BestExecutionPolicy = lazy(() => import("./pages/BestExecutionPolicy"));
+const LeveragePolicy = lazy(() => import("./pages/LeveragePolicy"));
+const NegativeBalanceProtection = lazy(() => import("./pages/NegativeBalanceProtection"));
+const InvestorCompensation = lazy(() => import("./pages/InvestorCompensation"));
+const RegulatoryInformation = lazy(() => import("./pages/RegulatoryInformation"));
+const Licenses = lazy(() => import("./pages/Licenses"));
+const FeesSchedule = lazy(() => import("./pages/FeesSchedule"));
+const TradingHours = lazy(() => import("./pages/TradingHours"));
+const Accessibility = lazy(() => import("./pages/Accessibility"));
+
 const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
@@ -100,6 +124,33 @@ function App() {
                 <Route path="/leaderboard" element={<AxiSelectPage />} />
 
                 {/* 404 */}
+                                {/* Legal Pages */}
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/risk-disclosure" element={<RiskDisclosure />} />
+                <Route path="/cookie-policy" element={<CookiePolicy />} />
+                <Route path="/gdpr-compliance" element={<GDPRCompliance />} />
+                <Route path="/aml-policy" element={<AMLPolicy />} />
+                <Route path="/kyc-policy" element={<KYCPolicy />} />
+                <Route path="/refund-policy" element={<RefundPolicy />} />
+                <Route path="/disclaimer" element={<Disclaimer />} />
+                <Route path="/complaints-procedure" element={<ComplaintsProcedure />} />
+                <Route path="/conflicts-of-interest" element={<ConflictsOfInterest />} />
+                <Route path="/best-execution-policy" element={<BestExecutionPolicy />} />
+                <Route path="/leverage-policy" element={<LeveragePolicy />} />
+                <Route path="/negative-balance-protection" element={<NegativeBalanceProtection />} />
+                <Route path="/investor-compensation" element={<InvestorCompensation />} />
+                <Route path="/regulatory-information" element={<RegulatoryInformation />} />
+                <Route path="/licenses" element={<Licenses />} />
+                <Route path="/fees-schedule" element={<FeesSchedule />} />
+                <Route path="/trading-hours" element={<TradingHours />} />
+                <Route path="/accessibility" element={<Accessibility />} />
+
+                {/* Support Pages */}
+                <Route path="/faq" element={<FAQPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/blog" element={<BlogPage />} />
+
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
