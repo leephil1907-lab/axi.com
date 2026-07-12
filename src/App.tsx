@@ -12,6 +12,7 @@ import { Toaster } from "sonner";
 // ── Lazy load pages ───────────────────────────────────────
 const MT4TradingPage = lazy(() => import("./pages/MT4TradingPage"));
 const MT5TradingPage = lazy(() => import("./pages/MT5TradingPage"));
+const AxiSelectPage = lazy(() => import("./pages/AxiSelectPage"));
 const HomePage = lazy(() => import("./pages/HomePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
@@ -95,6 +96,8 @@ function App() {
                 {/* Admin */}
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin-v2" element={<AdminDashboardPage />} />
+                <Route path="/axi-select" element={<AxiSelectPage />} />
+                <Route path="/leaderboard" element={<AxiSelectPage />} />
 
                 {/* 404 */}
                 <Route path="*" element={<NotFound />} />

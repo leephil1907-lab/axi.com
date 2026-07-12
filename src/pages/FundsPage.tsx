@@ -1,172 +1,297 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { ChevronRight, CreditCard, Bitcoin, Wallet, Landmark, ArrowRight } from "lucide-react";
-
-const fundingMethods = [
-  {
-    id: "crypto",
-    name: "Crypto",
-    description: "Instantly, 0% Fee",
-    icon: Bitcoin,
-    iconBg: "#1A1A1A",
-    iconColor: "#F7931A",
-    available: true,
-  },
-  {
-    id: "card",
-    name: "Credit or Debit Card",
-    description: "Instantly, 0% Fee",
-    icon: CreditCard,
-    iconBg: "#F5F2ED",
-    iconColor: "#1A1A1A",
-    available: true,
-  },
-  {
-    id: "googlepay",
-    name: "Google Pay",
-    description: "Instantly, 0% Fee",
-    icon: Wallet,
-    iconBg: "#F5F2ED",
-    iconColor: "#4285F4",
-    available: true,
-  },
-  {
-    id: "skrill",
-    name: "Skrill",
-    description: "Instantly, 0% Fee",
-    icon: Wallet,
-    iconBg: "#F5F2ED",
-    iconColor: "#862165",
-    available: true,
-  },
-  {
-    id: "bank",
-    name: "Bank Transfer",
-    description: "1-3 days, 0% Fee",
-    icon: Landmark,
-    iconBg: "#F5F2ED",
-    iconColor: "#1A1A1A",
-    available: true,
-  },
-];
+import { Link } from "react-router";
+import { useAuth } from "@/hooks/useAuth";
+import { trpc } from "@/providers/trpc";
+import Navbar from "@/sections/Navbar";
+import Footer from "@/sections/Footer";
+import TopBar from "@/sections/TopBar";
+import { PAYMENT_METHODS } from "@/lib/constants";
+import { 
+  ArrowRight, ChevronRight, Wallet, CreditCard, Banknote, 
+  Bitcoin, Smartphone, Globe, Shield, Clock, CheckCircle,
+  AlertTriangle, Plus, Minus, Eye, EyeOff, RefreshCw
+} from "lucide-react";
 
 export default function FundsPage() {
-  const [activeTab, setActiveTab] = useState<"deposit" | "withdraw" | "transfers" | "history" | "manage">("deposit");
+  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw' | 'transfer' | 'history'>('deposit');
+  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+  const [amount, setAmount] = useState('');
+  const [selectedAccount, setSelectedAccount] = useState('');
+  const [showBalance, setShowBalance] = useState(true);
+
+  const { data: account } = trpc.trading.account.useQuery();
+  const { data: deposits } = trpc.admin.deposits.useQuery();
+  const { data: withdrawals } = trpc.admin.withdrawals.useQuery();
+
+  // Mock accounts for display
+  const accounts = [
+    { id: '1', name: 'Standard 60332183', type: 'MT5', balance: 0, currency: 'USD', server: 'Axi-US51-Live', leverage: '1:1000' },
+    { id: '2', name: 'Standard 60332182', type: 'MT5', balance: 0, currency: 'USD', server: 'Axi-us52-live', leverage: '1:1000' },
+  ];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#EDE8E0" }}>
-      {/* Sub-nav */}
-      <div className="border-b" style={{ backgroundColor: "#fff", borderColor: "#F5F2ED" }}>
-        <div className="container-axi py-4">
-          <h1 className="text-2xl font-bold mb-4" style={{ color: "#1A1A1A" }}>Funds</h1>
-          <div className="flex gap-6 overflow-x-auto">
-            {(["deposit", "withdraw", "transfers", "history", "manage"] as const).map((tab) => (
-              <button key={tab} onClick={() => setActiveTab(tab)}
-                className="pb-3 text-sm font-semibold capitalize whitespace-nowrap transition-all relative"
-                style={{ color: activeTab === tab ? "#1A1A1A" : "#9B9590" }}>
-                {tab === "history" ? "Funding History" : tab}
-                {activeTab === tab && (
-                  <motion.div layoutId="fundTab" className="absolute bottom-0 left-0 right-0 h-0.5" style={{ backgroundColor: "#1A1A1A" }} />
+    <div className="min-h-screen bg-[#F5F5F0]">
+      <TopBar />
+      <Navbar />
+
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Header */}
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">Funds</h1>
+
+        {/* Tabs */}
+        <div className="flex border-b border-gray-200 mb-6">
+          {[
+            { key: 'deposit', label: 'Deposit' },
+            { key: 'withdraw', label: 'Withdraw' },
+            { key: 'transfer', label: 'Transfers' },
+            { key: 'history', label: 'Funding History' },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.key ? 'border-[#D51820] text-[#D51820]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Progress Stepper */}
+        <div className="flex items-center mb-8">
+          <div className="flex items-center gap-2 bg-purple-700 text-white px-4 py-2 rounded-l-lg text-sm font-medium">
+            <span>Select Account</span>
+          </div>
+          <div className="w-8 h-8 bg-gray-200 flex items-center justify-center">
+            <ChevronRight className="w-4 h-4 text-gray-400" />
+          </div>
+          <div className="flex items-center gap-2 bg-gray-200 text-gray-500 px-4 py-2 text-sm">
+            <span>Select Method</span>
+          </div>
+          <div className="w-8 h-8 bg-gray-200 flex items-center justify-center">
+            <ChevronRight className="w-4 h-4 text-gray-400" />
+          </div>
+          <div className="flex items-center gap-2 bg-gray-200 text-gray-500 px-4 py-2 rounded-r-lg text-sm">
+            <span>Confirm</span>
+          </div>
+        </div>
+
+        {/* Account Selection */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Which account would you like to fund?</h2>
+          <div className="space-y-3">
+            {accounts.map((acc) => (
+              <div 
+                key={acc.id}
+                onClick={() => setSelectedAccount(acc.id)}
+                className={`bg-white rounded-xl border-2 p-4 cursor-pointer transition-all ${selectedAccount === acc.id ? 'border-[#D51820] shadow-md' : 'border-gray-200 hover:border-gray-300'}`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedAccount === acc.id ? 'border-[#D51820]' : 'border-gray-300'}`}>
+                      {selectedAccount === acc.id && <div className="w-3 h-3 rounded-full bg-[#D51820]" />}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="bg-gradient-to-r from-red-500 to-orange-400 text-white text-xs px-2 py-0.5 rounded font-semibold">{acc.type}</span>
+                        <span className="bg-gray-900 text-white text-xs px-2 py-0.5 rounded font-semibold">AXI SELECT</span>
+                        <span className="text-sm font-semibold text-gray-900">Standard</span>
+                      </div>
+                      <div className="text-sm text-gray-500 mt-1">{acc.name}</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-gray-500">Balance ({acc.currency})</div>
+                    <div className="text-xl font-bold text-gray-900">
+                      {showBalance ? `${acc.currency} ${acc.balance.toFixed(2)}` : '****'}
+                    </div>
+                  </div>
+                </div>
+
+                {selectedAccount === acc.id && (
+                  <div className="mt-4 pt-4 border-t border-gray-100 flex gap-3">
+                    <button className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                      Fund
+                    </button>
+                    <button className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                      Trade
+                    </button>
+                    <button className="p-2 text-gray-400 hover:text-gray-600">
+                      <span className="text-lg">⋮</span>
+                    </button>
+                  </div>
                 )}
-              </button>
+              </div>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Progress stepper */}
-      <div className="container-axi py-4">
-        <div className="flex items-center gap-2 mb-6">
-          <div className="flex items-center gap-2 px-4 py-2 rounded" style={{ backgroundColor: "#1A1A1A" }}>
-            <ArrowRight size={14} className="text-white" />
-            <span className="text-xs font-semibold text-white uppercase tracking-wider">Select method</span>
-          </div>
-          <div className="flex-1 h-1 rounded" style={{ backgroundColor: "#D9D3CB" }} />
-          <div className="flex-1 h-1 rounded" style={{ backgroundColor: "#D9D3CB" }} />
-          <div className="flex-1 h-1 rounded" style={{ backgroundColor: "#D9D3CB" }} />
-        </div>
+        {/* Deposit Tab Content */}
+        {activeTab === 'deposit' && (
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">What payment method would you like to use?</h2>
+            <p className="text-sm text-gray-500 mb-4">Add new funding methods</p>
 
-        {activeTab === "deposit" && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <p className="text-base mb-2" style={{ color: "#1A1A1A" }}>What payment method would you like to use?</p>
-            <p className="text-sm mb-6" style={{ color: "#9B9590" }}>Add new funding methods</p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {fundingMethods.map((method) => (
-                <motion.button key={method.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 }}
-                  className="flex items-center gap-4 p-4 rounded-lg border text-left hover:shadow-md transition-all"
-                  style={{ backgroundColor: "#fff", borderColor: "#F5F2ED" }}>
-                  <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: method.iconBg }}>
-                    <method.icon size={24} style={{ color: method.iconColor }} />
+            <div className="grid grid-cols-2 gap-3">
+              {PAYMENT_METHODS.map((method) => (
+                <button
+                  key={method.id}
+                  onClick={() => setSelectedMethod(method.id)}
+                  className={`bg-white rounded-xl border-2 p-4 text-left transition-all hover:shadow-md ${selectedMethod === method.id ? 'border-[#D51820]' : 'border-gray-200'}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                        {method.id === 'card' && <CreditCard className="w-5 h-5 text-blue-600" />}
+                        {method.id === 'bank' && <Banknote className="w-5 h-5 text-green-600" />}
+                        {method.id === 'crypto' && <Bitcoin className="w-5 h-5 text-orange-500" />}
+                        {method.id === 'googlepay' && <Smartphone className="w-5 h-5 text-gray-700" />}
+                        {method.id === 'binance' && <Globe className="w-5 h-5 text-yellow-500" />}
+                        {method.id === 'skrill' && <Wallet className="w-5 h-5 text-purple-600" />}
+                        {method.id === 'neteller' && <Wallet className="w-5 h-5 text-green-500" />}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-900 text-sm">{method.name}</div>
+                        <div className="text-xs text-gray-500">Instantly, 0% Fee</div>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold" style={{ color: "#1A1A1A" }}>{method.name}</p>
-                    <p className="text-xs" style={{ color: "#9B9590" }}>{method.description}</p>
-                  </div>
-                  <ChevronRight size={18} style={{ color: "#9B9590" }} />
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {activeTab === "withdraw" && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <p className="text-base mb-6" style={{ color: "#1A1A1A" }}>Select a withdrawal method</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {fundingMethods.map((method) => (
-                <button key={method.id}
-                  className="flex items-center gap-4 p-4 rounded-lg border text-left hover:shadow-md transition-all"
-                  style={{ backgroundColor: "#fff", borderColor: "#F5F2ED" }}>
-                  <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: method.iconBg }}>
-                    <method.icon size={24} style={{ color: method.iconColor }} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold" style={{ color: "#1A1A1A" }}>{method.name}</p>
-                    <p className="text-xs" style={{ color: "#9B9590" }}>{method.description}</p>
-                  </div>
-                  <ChevronRight size={18} style={{ color: "#9B9590" }} />
                 </button>
               ))}
             </div>
-          </motion.div>
-        )}
 
-        {activeTab === "transfers" && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
-            <p className="text-lg font-semibold" style={{ color: "#1A1A1A" }}>Internal Transfers</p>
-            <p className="text-sm mt-2" style={{ color: "#9B9590" }}>Transfer funds between your trading accounts.</p>
-          </motion.div>
-        )}
-
-        {activeTab === "history" && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
-            <p className="text-lg font-semibold" style={{ color: "#1A1A1A" }}>Funding History</p>
-            <p className="text-sm mt-2" style={{ color: "#9B9590" }}>View all your past deposits and withdrawals.</p>
-          </motion.div>
-        )}
-
-        {activeTab === "manage" && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
-            <p className="text-lg font-semibold" style={{ color: "#1A1A1A" }}>Manage Payment Methods</p>
-            <p className="text-sm mt-2" style={{ color: "#9B9590" }}>Add or remove your saved payment methods.</p>
-          </motion.div>
-        )}
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 border-t py-3 px-6 flex items-center justify-between md:hidden"
-        style={{ backgroundColor: "#fff", borderColor: "#F5F2ED" }}>
-        <Link to="/dashboard" className="flex flex-col items-center gap-1">
-          <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: "#D31C2B" }}>
-            <ArrowRight size={12} className="text-white -rotate-45" />
+            {/* Amount Input */}
+            {selectedMethod && (
+              <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6">
+                <h3 className="font-semibold text-gray-900 mb-4">Enter Amount</h3>
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-lg font-semibold text-gray-900">EUR</span>
+                  <input
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="0.00"
+                    className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-lg font-mono focus:outline-none focus:border-[#D51820]"
+                  />
+                </div>
+                <div className="flex gap-2 mb-4">
+                  {['100', '500', '1000', '5000'].map((val) => (
+                    <button
+                      key={val}
+                      onClick={() => setAmount(val)}
+                      className="px-4 py-2 bg-gray-100 rounded-lg text-sm text-gray-700 hover:bg-gray-200 transition-colors"
+                    >
+                      €{val}
+                    </button>
+                  ))}
+                </div>
+                <button className="w-full bg-[#D51820] text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors">
+                  Deposit €{amount || '0.00'}
+                </button>
+              </div>
+            )}
           </div>
-        </Link>
+        )}
+
+        {/* Withdraw Tab */}
+        {activeTab === 'withdraw' && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h3 className="font-semibold text-gray-900 mb-4">Withdraw Funds</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-gray-600 mb-1 block">Select Account</label>
+                <select className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm">
+                  <option>Standard 60332183 - USD 0.00</option>
+                  <option>Standard 60332182 - USD 0.00</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-sm text-gray-600 mb-1 block">Withdrawal Method</label>
+                <select className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm">
+                  <option>Bank Transfer</option>
+                  <option>Credit/Debit Card</option>
+                  <option>Skrill</option>
+                  <option>Neteller</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-sm text-gray-600 mb-1 block">Amount (EUR)</label>
+                <input
+                  type="number"
+                  placeholder="0.00"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm"
+                />
+              </div>
+              <button className="w-full bg-[#D51820] text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors">
+                Request Withdrawal
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Transfer Tab */}
+        {activeTab === 'transfer' && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h3 className="font-semibold text-gray-900 mb-4">Transfer Between Accounts</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-gray-600 mb-1 block">From Account</label>
+                <select className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm">
+                  <option>Standard 60332183 - USD 0.00</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-sm text-gray-600 mb-1 block">To Account</label>
+                <select className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm">
+                  <option>Standard 60332182 - USD 0.00</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-sm text-gray-600 mb-1 block">Amount (EUR)</label>
+                <input type="number" placeholder="0.00" className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm" />
+              </div>
+              <button className="w-full bg-[#D51820] text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors">
+                Transfer Funds
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* History Tab */}
+        {activeTab === 'history' && (
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200 text-gray-500">
+                  <th className="text-left px-4 py-3">Date</th>
+                  <th className="text-left px-4 py-3">Type</th>
+                  <th className="text-left px-4 py-3">Method</th>
+                  <th className="text-right px-4 py-3">Amount</th>
+                  <th className="text-center px-4 py-3">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-gray-100">
+                  <td className="px-4 py-3 text-gray-500">No transactions yet</td>
+                  <td className="px-4 py-3" colSpan={4}></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Important Info */}
+        <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-yellow-800">
+            <p className="font-semibold mb-1">Important Information</p>
+            <p>At Axi, all transactions are processed instantly on our end. These transactions are then forwarded to our card processors and your bank. The entire process can take anywhere from 1 to 7 business days for the funds to be reflected in the respective account, depending on your bank and country.</p>
+          </div>
+        </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
