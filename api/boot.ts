@@ -8,4 +8,4 @@ serve({
   port,
 });
 
-console.log(`🚀 API server running on port ${port}`);
+console.log(`🚀 Axi Trading Platform running on port ${port}`);

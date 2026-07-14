@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && esbuild api/boot.ts --platform=node --bundle --format=esm --outdir=dist --banner:js=\"import { createRequire } from 'module';const require = createRequire(import.meta.url);\" --external:drizzle-orm --external:mysql2 --external:bcryptjs --external:jose --external:zod --external:@trpc/server --external:@trpc/client --external:@trpc/react-query --external:@tanstack/react-query --external:superjson --external:hono --external:@hono/node-server",
+    "build": "vite build",
     "build:vercel": "vite build",
-    "build:server": "esbuild api/boot.ts --platform=node --bundle --format=esm --outdir=dist --banner:js=\"import { createRequire } from 'module';const require = createRequire(import.meta.url);\" --external:drizzle-orm --external:mysql2 --external:bcryptjs --external:jose --external:zod --external:@trpc/server --external:superjson --external:hono --external:@hono/node-server",
-    "start": "NODE_ENV=production node dist/boot.js",
+    "build:server": "esbuild api/boot.ts --platform=node --bundle --format=esm --outdir=dist --external:drizzle-orm --external:mysql2 --external:bcryptjs --external:jose --external:zod --external:@trpc/server --external:superjson --external:hono --external:@hono/node-server",
+    "start": "node api/boot.js",
     "start:prod": "NODE_ENV=production node dist/boot.js",
     "lint": "eslint .",
     "preview": "vite preview",
