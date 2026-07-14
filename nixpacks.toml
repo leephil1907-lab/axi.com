@@ -2,8 +2,7 @@
 cmds = ['npm install', 'npm run build']
 
 [phases.setup]
-nixPkgs = ['nodejs_22', 'npm']
+nixPkgs = ['nodejs_18', 'npm']
 
 [start]
 cmd = 'npm start'
-
