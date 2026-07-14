@@ -1,5 +1,9 @@
 import { trpc } from "@/providers/trpc";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, type ReactNode } from "react";
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  return children;
+}
 
 export function useAuth() {
   const utils = trpc.useUtils();

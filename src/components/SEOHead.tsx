@@ -11,7 +11,7 @@ interface SEOHeadProps {
   breadcrumbs?: { name: string; url: string }[];
 }
 
-export default function SEOHead({ title, description, path, image, type, noIndex, breadcrumbs }: SEOHeadProps) {
+export function SEOHead({ title, description, path, image, type, noIndex, breadcrumbs }: SEOHeadProps) {
   useEffect(() => {
     const meta = generateMetaTags({ title, description, path, image, type, noIndex });
 

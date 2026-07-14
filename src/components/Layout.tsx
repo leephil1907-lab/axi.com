@@ -6,7 +6,7 @@ import RiskWarning from "../sections/RiskWarning";
 import LoginModal from "./LoginModal";
 import LiveChat from "./LiveChat";
 
-export default function Layout() {
+export function Layout() {
   const [loginOpen, setLoginOpen] = useState(false);
 
   return (

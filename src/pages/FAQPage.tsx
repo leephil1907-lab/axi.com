@@ -15,7 +15,7 @@ const faqCategories = [
 ];
 
 const faqs = [
-  { category: 'account', question: 'How do I open an account?', answer: 'Click "Open Account" and complete the 3-step registration. You'll need email, password, and identity verification.' },
+  { category: 'account', question: 'How do I open an account?', answer: 'Click "Open Account" and complete the 3-step registration. You\'ll need email, password, and identity verification.' },
   { category: 'account', question: 'What documents do I need?', answer: 'Government-issued photo ID and proof of address (utility bill or bank statement from last 3 months).' },
   { category: 'account', question: 'How long does verification take?', answer: 'Standard: 1-2 business days. Enhanced: 3-5 business days.' },
   { category: 'trading', question: 'What is the minimum deposit?', answer: 'No minimum for Standard accounts. Pro accounts require $500 minimum.' },
