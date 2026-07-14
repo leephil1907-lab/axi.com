@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: axi-trading-platform
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: LOCAL_AUTH_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: Kaspertrading9@gmail.com

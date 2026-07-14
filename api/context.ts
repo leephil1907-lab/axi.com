@@ -1,6 +1,5 @@
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import type { User } from "@db/schema";
-import { authenticateRequest } from "./kimi/auth";
 import { verifyLocalToken } from "./local-auth-router";
 import { getDb } from "./queries/connection";
 import { localUsers } from "@db/schema";
@@ -18,14 +17,7 @@ export async function createContext(
 ): Promise<TrpcContext> {
   const ctx: TrpcContext = { req: opts.req, resHeaders: opts.resHeaders };
 
-  // Try OAuth first
-  try {
-    ctx.user = await authenticateRequest(opts.req.headers);
-  } catch {
-    // OAuth not available
-  }
-
-  // Try local auth token
+  // Try local auth token (x-local-auth-token header)
   try {
     const token = opts.req.headers.get("x-local-auth-token");
     if (token) {
@@ -48,6 +40,9 @@ export async function createContext(
             email: user[0].email,
             avatar: null,
             role: user[0].role as "user" | "admin",
+            country: user[0].country,
+            language: user[0].language,
+            currency: user[0].currency,
             createdAt: user[0].createdAt,
             updatedAt: user[0].updatedAt,
             lastSignInAt: user[0].lastSignInAt,

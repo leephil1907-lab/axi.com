@@ -8,16 +8,26 @@ function required(name: string): string {
   return value ?? "";
 }
 
+function optional(name: string): string {
+  return process.env[name] ?? "";
+}
+
 export const env = {
-  appId: required("APP_ID"),
-  appSecret: required("APP_SECRET"),
-  isProduction: process.env.NODE_ENV === "production",
+  // Required
   databaseUrl: required("DATABASE_URL"),
-  kimiAuthUrl: required("KIMI_AUTH_URL"),
-  kimiOpenUrl: required("KIMI_OPEN_URL"),
-  ownerUnionId: process.env.OWNER_UNION_ID ?? "",
-  telegramBotToken: process.env.TELEGRAM_BOT_TOKEN ?? "",
-  telegramChatId: process.env.TELEGRAM_CHAT_ID ?? "",
-  whatsappNumber: process.env.WHATSAPP_NUMBER ?? "",
-  adminEmail: process.env.ADMIN_EMAIL ?? "",
+
+  // Optional - for local auth only (no Kimi OAuth)
+  appId: optional("APP_ID"),
+  appSecret: optional("APP_SECRET"),
+
+  // Admin settings
+  adminEmail: optional("ADMIN_EMAIL") || "Kaspertrading9@gmail.com",
+
+  // Notifications
+  telegramBotToken: optional("TELEGRAM_BOT_TOKEN"),
+  telegramChatId: optional("TELEGRAM_CHAT_ID"),
+  whatsappNumber: optional("WHATSAPP_NUMBER"),
+
+  // Runtime
+  isProduction: process.env.NODE_ENV === "production",
 };
