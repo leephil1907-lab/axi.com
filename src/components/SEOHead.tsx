@@ -10,6 +10,7 @@ interface SEOHeadProps {
   noIndex?: boolean;
   breadcrumbs?: { name: string; url: string }[];
 }
+
 export function SEOHead({ title, description, path, image, type, noIndex, breadcrumbs }: SEOHeadProps) {
   useEffect(() => {
     const meta = generateMetaTags({ title, description, path, image, type, noIndex });
@@ -77,4 +78,4 @@ export function SEOHead({ title, description, path, image, type, noIndex, breadc
   }, [title, description, path, image, type, noIndex, breadcrumbs]);
 
   return null;
-}
+            }
