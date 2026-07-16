@@ -1,19 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router";
-import { useAuth } from "@/hooks/useAuth";
 import { trpc } from "@/providers/trpc";
 import Navbar from "@/sections/Navbar";
 import Footer from "@/sections/Footer";
 import TopBar from "@/sections/TopBar";
 import { PAYMENT_METHODS } from "@/lib/constants";
 import { 
-  ArrowRight, ChevronRight, Wallet, CreditCard, Banknote, 
-  Bitcoin, Smartphone, Globe, Shield, Clock, CheckCircle,
-  AlertTriangle, Plus, Minus, Eye, EyeOff, RefreshCw
+  ChevronRight, Wallet, CreditCard, Banknote, 
+  Bitcoin, Smartphone, Globe,
+  AlertTriangle, Eye, EyeOff
 } from "lucide-react";
 
 export default function FundsPage() {
-  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw' | 'transfer' | 'history'>('deposit');
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [amount, setAmount] = useState('');
@@ -21,14 +18,11 @@ export default function FundsPage() {
   const [showBalance, setShowBalance] = useState(true);
 
   const { data: account } = trpc.trading.account.useQuery();
-  const { data: deposits } = trpc.admin.deposits.useQuery();
-  const { data: withdrawals } = trpc.admin.withdrawals.useQuery();
 
-  // Mock accounts for display
-  const accounts = [
-    { id: '1', name: 'Standard 60332183', type: 'MT5', balance: 0, currency: 'USD', server: 'Axi-US51-Live', leverage: '1:1000' },
-    { id: '2', name: 'Standard 60332182', type: 'MT5', balance: 0, currency: 'USD', server: 'Axi-us52-live', leverage: '1:1000' },
-  ];
+  // Real account data (falls back to a placeholder while loading)
+  const accounts = account
+    ? [{ id: String(account.id), name: `${account.accountType} ${account.accountNumber}`, type: account.accountType.toUpperCase(), balance: Number(account.balance), currency: account.currency, server: `Axi-${account.currency}-Live`, leverage: `1:${account.leverage}` }]
+    : [];
 
   return (
     <div className="min-h-screen bg-[#F5F5F0]">
@@ -101,7 +95,17 @@ export default function FundsPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-gray-500">Balance ({acc.currency})</div>
+                    <div className="flex items-center justify-end gap-1.5 text-sm text-gray-500">
+                      Balance ({acc.currency})
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setShowBalance((v) => !v); }}
+                        className="text-gray-400 hover:text-gray-600"
+                        aria-label={showBalance ? "Hide balance" : "Show balance"}
+                      >
+                        {showBalance ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
                     <div className="text-xl font-bold text-gray-900">
                       {showBalance ? `${acc.currency} ${acc.balance.toFixed(2)}` : '****'}
                     </div>

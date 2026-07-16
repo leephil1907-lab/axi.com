@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import Navbar from "@/sections/Navbar";
 import Footer from "@/sections/Footer";
 import TopBar from "@/sections/TopBar";
@@ -48,7 +47,7 @@ export default function FAQPage() {
       <Navbar />
 
       <div className="pt-24">
-        <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "FAQ" }]} />
+        <Breadcrumb items={[{ name: "FAQ", url: "/faq" }]} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

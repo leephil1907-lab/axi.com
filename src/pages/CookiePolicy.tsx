@@ -1,7 +1,6 @@
 import Navbar from "@/sections/Navbar";
 import Footer from "@/sections/Footer";
 import TopBar from "@/sections/TopBar";
-import { Cookie, Settings, Eye, Shield } from "lucide-react";
 
 export default function CookiePolicy() {
   return (

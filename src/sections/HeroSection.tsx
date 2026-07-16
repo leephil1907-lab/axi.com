@@ -3,7 +3,7 @@ import { useLocale, currencies } from '@/hooks/useLocale'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function HeroSection() {
-  const { t, currency } = useLocale()
+  const { currency } = useLocale()
   const { isAuthenticated } = useAuth()
   const cur = currencies.find(c => c.code === currency) || currencies[0]
   const stats = [

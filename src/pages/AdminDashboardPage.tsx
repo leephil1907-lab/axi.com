@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { trpc } from "@/providers/trpc";
 
 export default function AdminDashboardPage() {
-  const { user, isAuthenticated, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {

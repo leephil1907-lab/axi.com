@@ -5,7 +5,15 @@ import TopBar from "@/sections/TopBar";
 import { Calendar, Clock, User, Share2, Bookmark, ChevronLeft, Tag } from "lucide-react";
 import { Link } from "react-router";
 
-const posts = {
+const posts: Record<number, {
+  title: string;
+  author: string;
+  date: string;
+  readTime: string;
+  category: string;
+  tags: string[];
+  content: string;
+}> = {
   1: {
     title: "EUR/USD Analysis: ECB Decision Looms Large",
     author: "Sarah Chen",

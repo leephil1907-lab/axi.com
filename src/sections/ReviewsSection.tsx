@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { Star, Quote, ChevronDown } from 'lucide-react'
+import { Star, Quote } from 'lucide-react'
 
 const reviews = [
   {
@@ -33,8 +32,6 @@ const reviews = [
 ]
 
 export default function ReviewsSection() {
-  const [expandedId, setExpandedId] = useState<number | null>(null)
-
   return (
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

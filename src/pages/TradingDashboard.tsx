@@ -1,13 +1,13 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router'
 import { useAuth } from '@/hooks/useAuth'
 import { trpc } from '@/providers/trpc'
 import Navbar from '@/sections/Navbar'
 import { 
   ChevronLeft, DollarSign, BarChart3, TrendingUp, TrendingDown, 
-  Activity, Bell, Settings, Copy, Users, Calendar, Newspaper,
-  ChevronUp, ChevronDown, X, Plus, Minus, Eye, EyeOff, Zap,
-  Layers, Target, Clock, AlertTriangle, CheckCircle2, XCircle
+  Activity, Bell, Settings, Users, Calendar, Newspaper,
+  ChevronUp, ChevronDown, Plus, Minus, Zap,
+  Layers, Target, Clock, CheckCircle2, XCircle
 } from 'lucide-react'
 
 // ── Types ──────────────────────────────────────────────────
@@ -237,12 +237,29 @@ function CandlestickChart({
           </g>
         )}
 
+        {/* Live price line */}
+        {selectedPrice && (() => {
+          const askPrice = parseFloat(selectedPrice.ask)
+          if (isNaN(askPrice) || askPrice < Math.min(...prices) * 0.995 || askPrice > Math.max(...prices) * 1.005) return null
+          const y = yScale(askPrice)
+          return (
+            <g>
+              <line x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="#3B82F6" strokeWidth="1" strokeDasharray="3,3" opacity="0.8" />
+              <rect x={width - padding.right} y={y - 8} width={padding.right} height={16} fill="#3B82F6" />
+              <text x={width - padding.right + 4} y={y + 4} fill="#fff" fontSize="9" fontFamily="monospace">{askPrice.toFixed(5)}</text>
+            </g>
+          )
+        })()}
+
         {/* Time axis */}
         {data.filter((_, i) => i % Math.ceil(data.length / 6) === 0).map((d, i) => (
           <text key={`time-${i}`} x={xScale(data.indexOf(d))} y={height - 10} fill="#9CA3AF" fontSize="9" textAnchor="middle" fontFamily="monospace">
             {new Date(d.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </text>
         ))}
+
+        {/* Timeframe label */}
+        <text x={padding.left + 4} y={padding.top + 12} fill="#9CA3AF" fontSize="10" fontFamily="monospace" fontWeight="bold">{timeframe}</text>
       </svg>
 
       {/* Hover Tooltip */}
@@ -265,7 +282,7 @@ function CandlestickChart({
             <line x1={padding.left} y1={15} x2={width - padding.right} y2={15} stroke="#ef4444" strokeWidth="0.5" strokeDasharray="2,2" />
             <line x1={padding.left} y1={45} x2={width - padding.right} y2={45} stroke="#22c55e" strokeWidth="0.5" strokeDasharray="2,2" />
             <path 
-              d={rsi.filter((_, i) => !isNaN(_)).map((v, i) => `${i === 0 ? 'M' : 'L'} ${xScale(i)} ${60 - v * 0.6}`).join(' ')}
+              d={rsi.filter((_) => !isNaN(_)).map((v, i) => `${i === 0 ? 'M' : 'L'} ${xScale(i)} ${60 - v * 0.6}`).join(' ')}
               fill="none" stroke="#EC4899" strokeWidth="1.5"
             />
           </svg>
@@ -320,7 +337,7 @@ function CalendarEvent({ event }: { event: { time: string; currency: string; imp
   return (
     <div className="flex items-center gap-3 py-2 border-b border-gray-800 last:border-0">
       <div className="text-xs font-mono text-gray-400 w-12">{event.time}</div>
-      <div className={`w-2 h-2 rounded-full ${impactColors[event.impact]}`} />
+      <div className={`w-2 h-2 rounded-full ${impactColors[event.impact]}`} title={`${impactLabels[event.impact]} impact`} />
       <div className="flex-1 min-w-0">
         <div className="text-xs text-white truncate">{event.title}</div>
         <div className="text-[10px] text-gray-500">{event.currency}</div>
@@ -351,7 +368,7 @@ function NewsCard({ news }: { news: { title: string; summary: string; source: st
 
 // ── Main Component ───────────────────────────────────────
 export default function TradingDashboard() {
-  const { user, isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth()
   const [selectedSymbol, setSelectedSymbol] = useState('EURUSD')
   const [activeTab, setActiveTab] = useState('positions')
   const [orderDirection, setOrderDirection] = useState<'buy' | 'sell'>('buy')
@@ -486,7 +503,6 @@ export default function TradingDashboard() {
     const currentPrice = parseFloat(orderDirection === 'buy' ? selectedPrice.ask : selectedPrice.bid)
     const openPrice = parseFloat(pos.openPrice)
     const volume = parseFloat(pos.volume)
-    const pipValue = 0.0001 // Simplified
 
     if (pos.direction === 'buy') {
       return (currentPrice - openPrice) * volume * 100000
@@ -1066,7 +1082,14 @@ function PipCalculator({ symbol, price }: { symbol: string; price?: { bid: strin
   const [lotSize, setLotSize] = useState('1')
   const [pipCount, setPipCount] = useState('10')
 
-  const pipValue = parseFloat(lotSize) * 10
+  const pipSize = symbol.includes('JPY') ? 0.01 : 0.0001
+  const standardLotUnits = 100000
+  const midPrice = price ? (parseFloat(price.bid) + parseFloat(price.ask)) / 2 : 1
+
+  // Pip value in account currency (USD): if quote currency is USD, no conversion needed;
+  // if base currency is USD (e.g. USDJPY), divide by the price to convert quote-currency pip value to USD
+  const rawPipValue = pipSize * standardLotUnits * parseFloat(lotSize || '0')
+  const pipValue = symbol.startsWith('USD') && midPrice > 0 ? rawPipValue / midPrice : rawPipValue
   const totalValue = pipValue * parseFloat(pipCount || '0')
 
   return (

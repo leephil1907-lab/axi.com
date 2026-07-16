@@ -1,4 +1,3 @@
-import { Link } from "react-router";
 import Navbar from "@/sections/Navbar";
 import Footer from "@/sections/Footer";
 import TopBar from "@/sections/TopBar";
@@ -9,7 +8,7 @@ export default function ConflictsOfInterest() {
     <div className="min-h-screen bg-[#F5F5F0]">
       <TopBar />
       <Navbar />
-      <Breadcrumb />
+      <Breadcrumb items={[{ name: "Conflicts of Interest Policy", url: "/conflicts-of-interest" }]} />
 
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">

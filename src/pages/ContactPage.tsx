@@ -96,15 +96,33 @@ export default function ContactPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-1 block">Full Name</label>
-                  <input type="text" required className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#D51820]" placeholder="John Doe" />
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#D51820]"
+                    placeholder="John Doe"
+                  />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-1 block">Email</label>
-                  <input type="email" required className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#D51820]" placeholder="john@example.com" />
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#D51820]"
+                    placeholder="john@example.com"
+                  />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-1 block">Subject</label>
-                  <select className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#D51820]">
+                  <select
+                    value={formData.subject}
+                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#D51820]"
+                  >
                     <option>General Inquiry</option>
                     <option>Account Issue</option>
                     <option>Deposit/Withdrawal</option>
@@ -115,7 +133,14 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700 mb-1 block">Message</label>
-                  <textarea required rows={4} className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#D51820]" placeholder="How can we help you?"></textarea>
+                  <textarea
+                    required
+                    rows={4}
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#D51820]"
+                    placeholder="How can we help you?"
+                  ></textarea>
                 </div>
                 <button type="submit" className="w-full bg-[#D51820] text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
                   <Send className="w-4 h-4" /> Send Message

@@ -45,7 +45,7 @@ export async function createContext(
             currency: user[0].currency,
             createdAt: user[0].createdAt,
             updatedAt: user[0].updatedAt,
-            lastSignInAt: user[0].lastSignInAt,
+            lastSignInAt: user[0].lastSignInAt ?? user[0].createdAt,
           };
         }
       }

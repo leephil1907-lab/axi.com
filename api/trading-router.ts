@@ -66,13 +66,6 @@ async function getCurrentPrice(instrumentId: number, direction: string) {
   return direction === 'buy' ? ask : bid;
 }
 
-function calculatePipValue(symbol: string, price: number, volume: number): number {
-  // Simplified pip value calculation
-  const lotSize = 100000;
-  const pipSize = symbol.includes('JPY') ? 0.01 : 0.0001;
-  return (volume * lotSize * pipSize) / price;
-}
-
 function calculateMarginRequired(volume: number, price: number, leverage: number): number {
   const lotSize = 100000;
   return (volume * lotSize * price) / leverage;

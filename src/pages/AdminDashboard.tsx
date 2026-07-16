@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { trpc } from '@/providers/trpc'
 import { 
   ChevronLeft, Users, DollarSign, TrendingUp, BarChart3, 
-  Shield, Activity, Search, CheckCircle, XCircle, Clock
+  Shield, Activity, Search, CheckCircle, XCircle, Clock, ArrowUpDown
 } from 'lucide-react'
 
 export default function AdminDashboard() {
@@ -14,14 +14,18 @@ export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState('overview')
 
   const { data: stats } = trpc.admin.stats.useQuery()
-  const { data: users } = trpc.admin.users.useQuery({ page: currentPage, search: searchQuery || undefined })
-  const { data: allPositions } = trpc.admin.allPositions.useQuery()
-  const { data: allTrades } = trpc.admin.allTrades.useQuery()
+  const { data: usersData } = trpc.admin.users.useQuery({ page: currentPage, search: searchQuery || undefined })
+  const { data: positionsData } = trpc.admin.allPositions.useQuery()
+  const { data: tradesData } = trpc.admin.allTrades.useQuery()
   const { data: deposits } = trpc.admin.deposits.useQuery()
   const { data: withdrawals } = trpc.admin.withdrawals.useQuery()
 
-  const totalVolume = allTrades?.reduce((sum, t) => sum + parseFloat(t.volume.toString()), 0) || 0
-  const totalPnl = allTrades?.reduce((sum, t) => sum + parseFloat(t.netPnl.toString()), 0) || 0
+  const users = usersData?.users
+  const allPositions = positionsData?.positions
+  const allTrades = tradesData?.trades
+
+  const totalVolume = allTrades?.reduce((sum: number, t) => sum + parseFloat(t.volume.toString()), 0) || 0
+  const totalPnl = allTrades?.reduce((sum: number, t) => sum + parseFloat(t.netPnl.toString()), 0) || 0
 
   return (
     <div className="min-h-screen bg-[#F5F5F0] text-gray-900">
@@ -184,7 +188,7 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {users?.users?.map((u: any) => (
+                  {users?.map((u: any) => (
                     <tr key={u.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
@@ -212,6 +216,25 @@ export default function AdminDashboard() {
                   ))}
                 </tbody>
               </table>
+              <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 text-sm text-gray-500">
+                <span>Page {currentPage} of {Math.max(1, Math.ceil((usersData?.total || 0) / (usersData?.limit || 20)))}</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage <= 1}
+                    className="px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage((p) => p + 1)}
+                    disabled={currentPage >= Math.ceil((usersData?.total || 0) / (usersData?.limit || 20))}
+                    className="px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}

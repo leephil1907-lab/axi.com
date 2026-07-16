@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createRouter, authedQuery, publicQuery } from "./middleware";
 import { getDb } from "./queries/connection";
-import { tradeHistory, positions, tradingAccounts, users, localUsers } from "@db/schema";
+import { tradeHistory, positions, users } from "@db/schema";
 import { eq, and, desc, sql, gte } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
@@ -23,7 +23,6 @@ export const socialRouter = createRouter({
 
       // Get all users with their trade stats
       const allUsers = await db.select().from(users);
-      const allLocalUsers = await db.select().from(localUsers);
 
       const traders = [];
 
@@ -127,14 +126,7 @@ export const socialRouter = createRouter({
   // ── Copy Trading (Follow/Unfollow) ──────────────────────
   followTrader: authedQuery
     .input(z.object({ traderId: z.number(), allocation: z.number().min(0).max(100).optional() }))
-    .mutation(async ({ ctx, input }) => {
-      const db = getDb();
-
-      // Check if already following
-      const existing = await db.select()
-        .from(tradingAccounts)
-        .where(eq(tradingAccounts.userId, ctx.user!.id));
-
+    .mutation(async ({ input }) => {
       // For now, store in metadata - in production would use a separate follows table
       // This is a simplified implementation
       return { success: true, message: `Now following trader ${input.traderId}` };
@@ -142,7 +134,7 @@ export const socialRouter = createRouter({
 
   unfollowTrader: authedQuery
     .input(z.object({ traderId: z.number() }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       return { success: true, message: `Unfollowed trader ${input.traderId}` };
     }),
 

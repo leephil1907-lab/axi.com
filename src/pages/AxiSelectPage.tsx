@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import Navbar from "@/sections/Navbar";
 import Footer from "@/sections/Footer";
 import TopBar from "@/sections/TopBar";
-import { AXI_SELECT_TIERS } from "@/lib/constants";
 import { 
-  Trophy, TrendingUp, Users, Star, ChevronRight, 
-  Medal, Crown, Target, Zap, ArrowRight
+  Trophy, ChevronRight, 
+  Medal, Crown, ArrowRight
 } from "lucide-react";
 
 const leaderboardData = [
@@ -33,7 +31,6 @@ const tierFilters = [
 
 export default function AxiSelectPage() {
   const [activeTier, setActiveTier] = useState('all');
-  const [activeTab, setActiveTab] = useState<'overview' | 'leaderboard'>('overview');
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] text-white">

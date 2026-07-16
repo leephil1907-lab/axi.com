@@ -1,11 +1,14 @@
 import { Search, Globe, ChevronDown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface TopBarProps {
-  onLoginClick: () => void;
+  onLoginClick?: () => void;
 }
 
 export default function TopBar({ onLoginClick }: TopBarProps) {
+  const navigate = useNavigate();
+  const handleLoginClick = onLoginClick ?? (() => navigate("/login"));
+
   return (
     <div className="w-full h-[40px] flex items-center justify-between px-6" style={{ backgroundColor: "#D31C2B" }}>
       <div className="flex items-center gap-0">
@@ -14,7 +17,7 @@ export default function TopBar({ onLoginClick }: TopBarProps) {
           <ChevronDown size={12} className="text-white" />
         </button>
         <span className="text-white/50 mx-3">|</span>
-        <button onClick={onLoginClick} className="text-[11px] font-semibold uppercase tracking-[1.5px] text-white hover:underline">
+        <button onClick={handleLoginClick} className="text-[11px] font-semibold uppercase tracking-[1.5px] text-white hover:underline">
           Login
         </button>
         <span className="text-white/50 mx-3">|</span>

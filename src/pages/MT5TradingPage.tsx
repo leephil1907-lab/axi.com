@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { 
   Download, Monitor, Smartphone, Globe, CheckCircle, 
-  ArrowRight, Shield, Zap, BarChart3, TrendingUp, 
-  Clock, Users, Star, ChevronDown, ChevronUp, Play,
-  Laptop, Tablet, Apple, Cpu, Layers, Calendar, BookOpen
+  Shield, Zap, BarChart3, 
+  Users, Star, ChevronDown, ChevronUp, Play,
+  Laptop, Tablet, Layers, Calendar, BookOpen
 } from "lucide-react";
 import Navbar from "@/sections/Navbar";
 import Footer from "@/sections/Footer";

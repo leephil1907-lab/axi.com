@@ -1,6 +1,4 @@
-import { Link } from "react-router";
 import { motion } from "framer-motion";
-import { Link } from "react-router";
 import { Monitor, Smartphone, TrendingUp, Shield, Zap, BarChart3, Laptop } from "lucide-react";
 
 const platforms = [

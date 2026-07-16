@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createRouter, publicQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import { marketNews } from "@db/schema";
-import { eq, desc, and, gte, sql } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 
 // ── Market News & Calendar Router ─────────────────────────
 export const newsRouter = createRouter({

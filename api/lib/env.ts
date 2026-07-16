@@ -22,6 +22,7 @@ export const env = {
 
   // Admin settings
   adminEmail: optional("ADMIN_EMAIL") || "Kaspertrading9@gmail.com",
+  ownerUnionId: optional("OWNER_UNION_ID"),
 
   // Notifications
   telegramBotToken: optional("TELEGRAM_BOT_TOKEN"),

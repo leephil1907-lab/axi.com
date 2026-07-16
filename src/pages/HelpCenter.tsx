@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import Navbar from "@/sections/Navbar";
 import Footer from "@/sections/Footer";
 import TopBar from "@/sections/TopBar";
-import { Search, MessageCircle, Phone, Mail, BookOpen, Video, FileText, ChevronRight, ChevronDown, ChevronUp, Clock, Globe, Shield } from "lucide-react";
+import { Search, MessageCircle, Phone, Mail, BookOpen, Video, FileText, ChevronDown, ChevronUp, Globe, Shield } from "lucide-react";
 
 const categories = [
   { icon: BookOpen, title: "Getting Started", articles: 24, color: "blue" },

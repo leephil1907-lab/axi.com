@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
-import { useAuth } from "@/hooks/useAuth";
+import { Link, useNavigate } from "react-router";
 import { trpc } from "@/providers/trpc";
 import Navbar from "@/sections/Navbar";
 import Footer from "@/sections/Footer";
@@ -9,6 +8,7 @@ import { COUNTRIES, LANGUAGES, CURRENCIES, DEFAULT_CURRENCY } from "@/lib/consta
 import { CheckCircle, Globe, MapPin, DollarSign, ChevronRight, Shield, User, Mail, Lock } from "lucide-react";
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,10 +21,18 @@ export default function SignUp() {
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState("");
 
-  const { login } = useAuth();
-  const register = trpc.localAuth.register.useMutation({
+  const loginMutation = trpc.localAuth.login.useMutation({
     onSuccess: (data) => {
-      login(data.token, data.user);
+      localStorage.setItem("local_auth_token", data.token);
+      navigate("/dashboard");
+    },
+    onError: (err) => setError(err.message),
+  });
+
+  const register = trpc.localAuth.register.useMutation({
+    onSuccess: () => {
+      // Registration doesn't return a session token, so log in right after
+      loginMutation.mutate({ email, password });
     },
     onError: (err) => setError(err.message),
   });
@@ -43,8 +51,6 @@ export default function SignUp() {
       password,
       name: name || undefined,
       country,
-      language,
-      currency,
     });
   };
 
@@ -257,10 +263,10 @@ export default function SignUp() {
                   </button>
                   <button
                     onClick={handleSubmit}
-                    disabled={register.isPending}
+                    disabled={register.isPending || loginMutation.isPending}
                     className="flex-1 bg-[#D51820] text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50"
                   >
-                    {register.isPending ? 'Creating Account...' : 'Create Account'}
+                    {(register.isPending || loginMutation.isPending) ? 'Creating Account...' : 'Create Account'}
                   </button>
                 </div>
               </div>

@@ -9,7 +9,6 @@ import {
   orders,
   transactions,
   tradeHistory,
-  marketNews,
 } from "./schema";
 
 export const usersRelations = relations(users, ({ many }) => ({

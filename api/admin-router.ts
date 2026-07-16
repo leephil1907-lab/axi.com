@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { createRouter, adminQuery } from "./middleware";
 import { getDb } from "./queries/connection";
-import { users, tradingAccounts, positions, orders, tradeHistory, instruments, transactions, marketNews } from "@db/schema";
-import { eq, desc, count, sql } from "drizzle-orm";
+import { users, tradingAccounts, positions, orders, tradeHistory, transactions, instruments } from "@db/schema";
+import { eq, desc, count, sql, getTableColumns } from "drizzle-orm";
 
 export const adminRouter = createRouter({
   analytics: adminQuery.query(async () => {
@@ -46,7 +46,13 @@ export const adminRouter = createRouter({
     .query(async ({ input }) => {
       const db = getDb();
       const where = input?.status ? eq(positions.status, input.status) : undefined;
-      const posList = await db.select().from(positions).where(where).orderBy(desc(positions.openedAt)).limit(input?.limit || 50).offset(((input?.page || 1) - 1) * (input?.limit || 50));
+      const posList = await db.select({ ...getTableColumns(positions), symbol: instruments.symbol })
+        .from(positions)
+        .leftJoin(instruments, eq(positions.instrumentId, instruments.id))
+        .where(where)
+        .orderBy(desc(positions.openedAt))
+        .limit(input?.limit || 50)
+        .offset(((input?.page || 1) - 1) * (input?.limit || 50));
       const [totalResult] = await db.select({ count: count() }).from(positions).where(where);
       return { positions: posList, total: totalResult.count, page: input?.page || 1, limit: input?.limit || 50 };
     }),
@@ -55,8 +61,43 @@ export const adminRouter = createRouter({
     .input(z.object({ page: z.number().default(1), limit: z.number().default(50) }).optional())
     .query(async ({ input }) => {
       const db = getDb();
-      const trades = await db.select().from(tradeHistory).orderBy(desc(tradeHistory.closedAt)).limit(input?.limit || 50).offset(((input?.page || 1) - 1) * (input?.limit || 50));
+      const trades = await db.select({ ...getTableColumns(tradeHistory), symbol: instruments.symbol })
+        .from(tradeHistory)
+        .leftJoin(instruments, eq(tradeHistory.instrumentId, instruments.id))
+        .orderBy(desc(tradeHistory.closedAt))
+        .limit(input?.limit || 50)
+        .offset(((input?.page || 1) - 1) * (input?.limit || 50));
       const [totalResult] = await db.select({ count: count() }).from(tradeHistory);
       return { trades, total: totalResult.count, page: input?.page || 1, limit: input?.limit || 50 };
+    }),
+
+  stats: adminQuery.query(async () => {
+    const db = getDb();
+    const [totalUsers] = await db.select({ count: count() }).from(users);
+    const [activeAccounts] = await db.select({ count: count() }).from(tradingAccounts).where(eq(tradingAccounts.isActive, true));
+    const [openPositions] = await db.select({ count: count() }).from(positions).where(eq(positions.status, "open"));
+    const totalDepositsResult = await db.select({ total: sql<string>`COALESCE(SUM(${transactions.amount}), 0)` }).from(transactions).where(sql`${transactions.type} = 'deposit' AND ${transactions.status} = 'completed'`);
+    const [pendingWithdrawals] = await db.select({ count: count() }).from(transactions).where(sql`${transactions.type} = 'withdrawal' AND ${transactions.status} = 'pending'`);
+    return {
+      totalUsers: totalUsers.count,
+      activeAccounts: activeAccounts.count,
+      openPositions: openPositions.count,
+      totalDeposits: totalDepositsResult[0]?.total || "0",
+      pendingWithdrawals: pendingWithdrawals.count,
+    };
+  }),
+
+  deposits: adminQuery
+    .input(z.object({ limit: z.number().default(50) }).optional())
+    .query(async ({ input }) => {
+      const db = getDb();
+      return db.select().from(transactions).where(eq(transactions.type, "deposit")).orderBy(desc(transactions.createdAt)).limit(input?.limit || 50);
+    }),
+
+  withdrawals: adminQuery
+    .input(z.object({ limit: z.number().default(50) }).optional())
+    .query(async ({ input }) => {
+      const db = getDb();
+      return db.select().from(transactions).where(eq(transactions.type, "withdrawal")).orderBy(desc(transactions.createdAt)).limit(input?.limit || 50);
     }),
 });

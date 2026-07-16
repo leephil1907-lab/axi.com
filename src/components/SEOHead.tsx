@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { siteConfig, generateMetaTags, generateOrganizationSchema, generateBreadcrumbSchema } from "@/lib/seo";
+import { generateMetaTags, generateOrganizationSchema, generateBreadcrumbSchema } from "@/lib/seo";
 
 interface SEOHeadProps {
   title: string;
@@ -13,7 +13,7 @@ interface SEOHeadProps {
 
 export function SEOHead({ title, description, path, image, type, noIndex, breadcrumbs }: SEOHeadProps) {
   useEffect(() => {
-    const meta = generateMetaTags({ title, description, path, image, type, noIndex });
+    const meta = generateMetaTags({ title, description: description ?? "", path, image, type, noIndex });
 
     // Update title
     document.title = meta.title;
@@ -63,7 +63,7 @@ export function SEOHead({ title, description, path, image, type, noIndex, breadc
     canonical.href = meta.alternates.canonical;
 
     // Structured data
-    const schemas = [generateOrganizationSchema()];
+    const schemas: Record<string, unknown>[] = [generateOrganizationSchema()];
     if (breadcrumbs) schemas.push(generateBreadcrumbSchema(breadcrumbs));
 
     let script = document.getElementById('structured-data') as HTMLScriptElement;
@@ -78,4 +78,4 @@ export function SEOHead({ title, description, path, image, type, noIndex, breadc
   }, [title, description, path, image, type, noIndex, breadcrumbs]);
 
   return null;
-            }
+}

@@ -1,19 +1,22 @@
-import { Outlet } from "react-router-dom";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import Navbar from "../sections/Navbar";
 import Footer from "../sections/Footer";
 import RiskWarning from "../sections/RiskWarning";
 import LoginModal from "./LoginModal";
 import LiveChat from "./LiveChat";
 
- export function Layout() {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+export function Layout({ children }: LayoutProps) {
   const [loginOpen, setLoginOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#EDE8E0" }}>
-      <Navbar onLoginClick={() => setLoginOpen(true)} />
+      <Navbar />
       <main className="flex-1">
-        <Outlet context={{ setLoginOpen }} />
+        {children}
       </main>
       <Footer />
       <RiskWarning />

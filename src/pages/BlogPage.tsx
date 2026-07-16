@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import Navbar from "@/sections/Navbar";
 import Footer from "@/sections/Footer";
 import TopBar from "@/sections/TopBar";
-import { Search, Calendar, Clock, User, TrendingUp, TrendingDown, ArrowRight, Tag, ChevronRight } from "lucide-react";
+import { Search, Calendar, Clock, User, TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
 
 const blogPosts = [
   {
