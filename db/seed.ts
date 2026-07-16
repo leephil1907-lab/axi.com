@@ -1,4 +1,4 @@
-import { getDb } from "../api/queries/connection";
+import { getDb } from "../api/_lib/queries/connection";
 import { instruments } from "./schema";
 
 const db = getDb();

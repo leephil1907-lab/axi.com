@@ -1,4 +1,4 @@
-import { getDb } from '../api/queries/connection';
+import { getDb } from '../api/_lib/queries/connection';
 import { sql } from 'drizzle-orm';
 
 async function main() {

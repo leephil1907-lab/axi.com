@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && esbuild api/boot.ts --platform=node --bundle --format=esm --outfile=dist/server.js --external:drizzle-orm --external:mysql2 --external:bcryptjs --external:jose --external:zod --external:@trpc/server --external:superjson --external:hono --external:@hono/node-server",
+    "build": "vite build && esbuild api/_lib/boot.ts --platform=node --bundle --format=esm --outfile=dist/server.js --external:drizzle-orm --external:mysql2 --external:bcryptjs --external:jose --external:zod --external:@trpc/server --external:superjson --external:hono --external:@hono/node-server",
     "build:vercel": "vite build",
-    "build:server": "esbuild api/boot.ts --platform=node --bundle --format=esm --outdir=dist --external:drizzle-orm --external:mysql2 --external:bcryptjs --external:jose --external:zod --external:@trpc/server --external:superjson --external:hono --external:@hono/node-server",
+    "build:server": "esbuild api/_lib/boot.ts --platform=node --bundle --format=esm --outdir=dist --external:drizzle-orm --external:mysql2 --external:bcryptjs --external:jose --external:zod --external:@trpc/server --external:superjson --external:hono --external:@hono/node-server",
     "start": "node dist/server.js",
     "start:prod": "NODE_ENV=production node dist/boot.js",
     "lint": "eslint .",

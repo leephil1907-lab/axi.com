@@ -2,8 +2,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { bodyLimit } from "hono/body-limit";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { appRouter } from "./router";
-import { createContext } from "./context";
+import { appRouter } from "./_lib/router";
+import { createContext } from "./_lib/context";
 
 export const app = new Hono().basePath("/api");
 
